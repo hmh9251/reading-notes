@@ -16,7 +16,7 @@ var str = "Boolean,Number,String,Function,Array,Date,RegExp,Window,Document,Argu
     class2type[ "[object " +name+ "]" ] = name;
   })
 
-function type(obj, str) {  
+function isType(obj, str) {  
   var result = class2type[ (obj == null || obj !== obj) ? obj : toString.call(obj) ] || obj.nodeName || "#";
 
   if(result.charAt(0) === '#') {
@@ -38,4 +38,12 @@ function type(obj, str) {
 }
 
 var a = "1";
-console.log(type(a));
+console.log(isType(a));
+
+function isDate(o) {  
+  return {}.toString.call(o) === "[Object Date]" && o.toString() !== 'Invalid Date' && !isNaN(o);
+}
+
+function isNumber(o) {
+  return '[object Number]' == {}.toString.call(o) && isFinite(o);
+}
