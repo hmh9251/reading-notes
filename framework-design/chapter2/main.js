@@ -1,8 +1,8 @@
-define(['a'],function(a) {
+define([],function() {
   'use strict';
   return {
     a: function() {
-      console.log(a.init());
+      console.log('dqwdwq');
     }
   }
 

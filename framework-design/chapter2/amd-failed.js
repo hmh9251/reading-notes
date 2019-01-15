@@ -5,7 +5,7 @@
     loadDepsJs = [];
 
   function getCurrentJs() {
-    return document.getCurrentJs ? document.getCurrentJs.src : '_@';
+    return document.currentScript ? document.currentScript.src : '_@';
   }
 
   window.require = function(deps, callback) {
@@ -26,7 +26,7 @@
 
   window.define = function(deps, callback) {
     var id = getCurrentJs();
-    if (!modules.id) {
+    if (!modules[id]) {
       modules[id] = {
         id: id,
         deps: deps,
