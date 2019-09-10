@@ -39,3 +39,22 @@ const insertionSort = arr => {
 }
 
 console.log(insertionSort([5,6,2,5,2,53,9,5,0,2,5,3,2,6,1]));
+
+//选择排序
+const selectionSort = arr => {
+  if(arr.length <= 1) return arr;
+  for(let i = 0; i < arr.length - 1; i++) {
+    let minIndex = i;
+    for(let j = i + 1; j < arr.length; j++) {
+      if(arr[j] < arr[minIndex]){
+        minIndex = j;
+      }
+    }
+    const temp = arr[minIndex];
+    arr[minIndex] = arr[i];
+    arr[i] = temp;
+  }
+  return arr;
+}
+
+console.log(insertionSort([5,6,2,5,2,53,9,5,0,2,5,3,2,6,1]));
