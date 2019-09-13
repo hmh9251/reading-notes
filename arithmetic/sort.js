@@ -8,7 +8,7 @@ const bubbleSort = arr => {
     for(let j = 0; j < length-i-1; j++) {
       if(arr[j] > arr[j + 1]) {
         let temp = arr[j+1];
-        arr[j+1] = arr[j];
+        arr[j+1] = arr[j]; 
         arr[j] = temp;
         haschange = true;
       }
@@ -91,6 +91,40 @@ while (i < 100) {
     i++
 }
 
-const res = mergeSort(testArr)
+/* const res = mergeSort(testArr)
 console.log(testArr)
-console.log(res)
+console.log(res) */
+
+//快速排序
+const swap = (arr, i, j) => {
+  const temp = arr[j];
+  arr[j] = arr[i];
+  arr[i] = temp;
+}
+
+const position = (arr, pivot, left, right) => {
+  const pivotVal = arr[pivot];
+  let startIndex = left;
+  for(let i = left; i < right; i++) {
+    if(arr[i] < pivotVal) {
+      swap(arr, i, startIndex);
+      startIndex++;
+    }
+  }
+  swap(arr, startIndex, pivot);
+  return startIndex;
+}
+
+const quickSort = (arr, left, right) => {
+  if(left < right) {
+    let pivot = right;
+    let pivotIndex = position(arr, pivot, left, right);
+    quickSort(arr,left, pivotIndex - 1< left ? left: pivotIndex - 1);
+    quickSort(arr,pivotIndex + 1 > right ? right : pivotIndex + 1, right)
+  }
+  return arr;
+}
+
+console.log(testArr)
+const res = quickSort(testArr, 0, testArr.length - 1);
+console.log(testArr)
