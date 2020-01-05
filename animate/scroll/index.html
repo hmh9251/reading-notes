@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>滚动变化动画</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+  <div class="scroll-animate"></div>
+  <script src="../../utils/vconsole.min.js"></script>
+  <script src="../../utils/lodash.js"></script>
+  <script src="scroll.js"></script>
+  <script>
+    new VConsole();
+    let arr = [1,2,3,4];
+    let html = "";
+    for(let i = 0; i < 500; i++) {
+      let current = arr.splice(0,1);
+      html += '<div class="scroll-animate-item">';
+        html += `<img src="./img/demo${current}.jpg" alt="">`;
+      html += '</div>';
+      arr.push(current);
+    }
+    document.querySelector(".scroll-animate").innerHTML = html;
+
+    let throttleGetRect = _.debounce(getRect.bind(null, ".scroll-animate-item"), 4);
+    window.addEventListener("scroll", () => {
+      getRect(".scroll-animate-item");
+      // throttleGetRect();
+		})
+  </script>
+</body>
+</html>

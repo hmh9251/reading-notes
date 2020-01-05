@@ -76,6 +76,7 @@
   }
 
   checkDeps = function checkDeps() {
+    console.log(loadings);
     for (var i = 0, id; i < loadings.length; i++) {
       
       id = loadings[i];
@@ -83,7 +84,7 @@
       
       var obj = modules[id],
       deps = obj.deps;
-      console.log(id, deps, '准备开始检测');
+      // console.log(id, deps, '准备开始检测');
       
 
       var flag = checkCycle(deps);
