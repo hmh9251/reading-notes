@@ -15,7 +15,7 @@ function getRect(className) {
   }
 }
 
-/* function setAnimate(item, top) {
+function setAnimate(item, top) {
   let wHeight = window.innerHeight;
   let mid = wHeight / 2;
   let x = mid / 2; //在屏幕的四分之一处开始变化
@@ -43,9 +43,9 @@ function getRect(className) {
   } else {
     item.style.transform =`scale(1,1)`;
   }
-} */
+}
 
-function setAnimate(item, top) {
+/* function setAnimate(item, top) {
   let wHeight = window.innerHeight;
   let mid = wHeight / 2;
   let x = mid / 2; //在屏幕的四分之一处开始变化
@@ -73,4 +73,4 @@ function setAnimate(item, top) {
   } else {
     item.style.transform =`perspective(900px) rotateX(0rad)`;
   }
-}
+} */
