@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>红包雨</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #game {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="game"></canvas>
+    </div>
+    <!-- <script src="../../utils/vconsole.min.js"></script> -->
+    <!-- <script src="../../utils/lodash.js"></script> -->
+    <script src="./fabric.min.js"></script>
+    <script>
+      // new VConsole();
+      //使用canvas
+      //图片地址 https://img.51fanbei.com/h5/app/activity/redRain_09.png
+      // https://img.51fanbei.com/h5/app/activity/redRain_10.png
+      let redpack = "https://img.51fanbei.com/h5/app/activity/redRain_09.png";
+      let timer = null;
+      const canvas = new fabric.Canvas("game", {
+        height: 800, // 让画布同视窗大小
+        width: window.innerWidth,
+        selection: false
+      });
+
+      canvas.observe('mouse:down', options => {
+        console.log(options);
+        if (options.target) {
+          options.target.setSrc("https://img.51fanbei.com/h5/app/activity/redRain_10.png", () => {
+            canvas.renderAll();
+          });
+        }
+      })
+
+      animate(() => {
+        go()
+      });
+
+      function animate(callback) {
+        let win =
+          document.documentElement.clientWidth || document.body.clientWidth;
+
+        let scale = fabric.util.getRandomInt(3, 6) / 10;
+        let durTime = parseInt(Math.random() * 1.5) + 2.5; // 时间
+        let angle = fabric.util.getRandomInt(0, 180);
+        let left = fabric.util.getRandomInt(130, win - 50);
+
+        fabric.Image.fromURL(redpack, oImg => {
+          oImg.scale(scale).set({
+            angle: angle,
+            left: left,
+            selectable: false
+          });
+          canvas.add(oImg);
+          let speed = fabric.util.getRandomInt(2, 5);
+          oImg.speed = speed;
+          /* 递归的方式非常吃内存 
+          let go = () => {
+            if (oImg.top > 1300) {
+              canvas.remove(oImg);
+              return false;
+            }
+            oImg.top += speed;
+            oImg.setCoords();
+            canvas.renderAll();
+            fabric.util.requestAnimFrame(go);
+          }
+          go(); */
+          callback && callback()
+        });
+        
+        setTimeout(() => {
+          clearTimeout(timer);
+        }, 10000);
+
+        timer = setTimeout(() => {
+          animate();
+        }, 300);
+      }
+
+      function go() {
+        // 改成for应该还能更快 
+        canvas.forEachObject(function (obj) {
+            if (!obj) return false;
+            obj.top += obj.speed;
+            if (obj.top > 1300) {
+                canvas.remove(obj);
+            }                 
+            obj.setCoords();
+        });
+        /* 
+        //改成for并没有变得更快
+        let arr = canvas._objects
+        if (arr.length < 1) return false;
+        for(let i = 0; i < arr.length; i++) {
+          const obj = arr[i];
+          if (!obj) return false;
+          obj.top += obj.speed;
+          if (obj.top > 1300) canvas.remove(obj);     
+          obj.setCoords();
+        } */
+        canvas.renderAll();
+        fabric.util.requestAnimFrame(go);
+      }
+
+    </script>
+    <!-- <script src="./redrain.js"></script>
+  <script>
+    
+    for(let i = 0; i < 100; i++) {
+      setTimeout(() => {
+        let durTime = parseInt(Math.random() * 1.5) + 5;
+        const redrain  = new Redrain("#app", 1000, durTime);
+        redrain.start();
+      }, i * 200)
+    }
+  </script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.5.0/velocity.min.js"></script>
+  <script>
+    
+    // 直接使用velocity插件
+    const app = document.querySelector("#app");
+    
+    for(let i = 0; i < 1; i++) {
+      const redrain = document.createElement('div');
+      redrain.className = 'redrain';
+      app.appendChild(redrain);
+      Velocity(redrain, {
+          top: ((i + 1) * 500) + 'px'
+      }, {
+          duration:  3000
+      });
+    } 
+ 
+
+  </script> -->
+  </body>
+</html>
