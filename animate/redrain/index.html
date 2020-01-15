@@ -93,7 +93,7 @@
 
       function go() {
         // 改成for应该还能更快 
-        canvas.forEachObject(function (obj) {
+        canvas.forEachObject(obj => {
             if (!obj) return false;
             obj.top += obj.speed;
             if (obj.top > 1300) {

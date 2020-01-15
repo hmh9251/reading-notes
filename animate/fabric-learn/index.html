@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <button id="toggle">start</button>
+      </div>
+      <canvas id="game"></canvas>
+    </div>
+    <script src="../redrain/fabric.min.js"></script>
+    <script>
+      const windowSize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+
+      const canvas = new fabric.Canvas("game", {
+        height: 800, // 让画布同视窗大小
+        width: window.innerWidth,
+        selection: false
+      });
+
+      let playing = true;
+
+      // add 100 circle
+      for (let i = 0; i < 100; i++) {
+        // 产生圆形，并给定随机起始值
+        let circle = new fabric.Circle({
+          radius: getRandomInt(2, 15),
+          left: getRandomInt(0, windowSize.width),
+          top: getRandomInt(0, windowSize.height),
+          opacity: getRandomInt(0.1, 1)
+        }); // 纪录一下自己是第几个被產生的 circle
+        circle.lastAdd = i === 99;
+        canvas.add(circle); // 设定动画
+        playing && setAnimate(circle);
+      }
+
+      // 左上方按钮
+      document.querySelector("#toggle").addEventListener("click", e => {
+        const targetEl = e.target;
+        if (playing) {
+          targetEl.innerHTML = "start";
+        } else {
+          targetEl.innerHTML = "stop";
+          // 让所有物件在一次动起来
+          canvas.getObjects().forEach(circle => setAnimate(circle));
+        }
+        playing = !playing;
+      });
+
+      // 设定动画函数
+      function setAnimate(circle) {
+        // 变化半径
+        circle.animate("radius", getRandomInt(2, 15), {
+          duration: getRandomInt(1000, 5000)
+        });
+        // 变化透明度
+        circle.animate("opacity", getRandomInt(0, 1), {
+          duration: getRandomInt(1000, 5000)
+        });
+        // 变化座标
+        circle.animate("left", getRandomInt(0, windowSize.width), {
+          easing: fabric.util.ease.easeInOutCubic,
+          duration: getRandomInt(1000, 5000)
+        });
+        // 变化座标
+        circle.animate("top", getRandomInt(0, windowSize.height), {
+          onChange: () => {
+            // 不需要每个 circle 都呼叫 canvas.renderAll()
+            // 只有最后一个被新增的物件 onChange 去更新画布
+            if (circle.lastAdd) canvas.renderAll();
+          },
+          onComplete: () => playing && setAnimate(circle),
+          easing: fabric.util.ease.easeInOutCubic,
+          duration: getRandomInt(1000, 5000)
+        });
+      }
+
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+    </script>
+  </body>
+</html>
