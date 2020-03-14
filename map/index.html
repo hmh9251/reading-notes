@@ -1,0 +1,772 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>浏览器精确定位</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <style>
+        html,body{
+            height:100%;
+        }
+        #container {
+          height: 100%;
+        }
+        .info{
+            width:26rem;
+        }
+
+
+        .nav {
+          height: 40px;
+          width: 26px;
+          display: block;
+          position: relative;
+          text-align: center;
+          font-size: 16px;
+          color: #fff;
+        }
+        .nav:before {
+          content: '';
+          height: 26px;
+          width: 26px;
+          display: block;
+          position: absolute;
+          z-index: -1;
+          line-height: 26px;
+          background: red;
+          border-radius: 40px;
+          -webkit-border-radius: 40px;
+          -moz-border-radius: 40px;
+          color: #fff;
+          text-align: center;
+        }
+        .nav:after {
+          content: '';
+          height: 0px;
+          width: 0px;
+          border: 10px transparent solid;
+          display: block;
+          position: absolute;
+          bottom: -7px;
+          left: 3px;
+          border-right: 10px solid transparent;
+          border-top: 15px solid red;
+          border-left: 10px solid transparent;
+        }
+    </style>
+<body>
+<div id='container'></div>
+<div class="info">
+  <h4 id="text"></h4>
+  <p>当前级别：<span id="map-zoom">15</span></p>
+  <div>
+    <button onclick="m()">标记</button>
+    <input id='city-name' placeholder="北京市" type="text" style="margin-right:1rem;">
+    <button class="btn" id="query">去指定城市</button>
+    <button class="btn" id="all">去指定城市</button>
+  </div>
+  <p>当前中心点：<span id="map-center">121.498586,31.239637</span></p>
+</div>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=f4d00df99387a94c9e1d73c4576a3b94&plugin=AMap.Geocoder,AMap.Geolocation,AMap.MarkerClusterer,AMap.DistrictLayer,AMap.Scale,AMap.ToolBar"></script>
+<script src="./data.js"></script>
+<script src="https://a.amap.com/jsapi_demos/static/citys.js"></script>
+<script type="text/javascript" src="https://a.amap.com/jsapi_demos/static/demo-center/data/china-pp.js"></script>
+<script type="text/javascript">
+const city_list = {
+    110100: '北京市',
+    120100: '天津市',
+    130100: '石家庄市',
+    130200: '唐山市',
+    130300: '秦皇岛市',
+    130400: '邯郸市',
+    130500: '邢台市',
+    130600: '保定市',
+    130700: '张家口市',
+    130800: '承德市',
+    130900: '沧州市',
+    131000: '廊坊市',
+    131100: '衡水市',
+    140100: '太原市',
+    140200: '大同市',
+    140300: '阳泉市',
+    140400: '长治市',
+    140500: '晋城市',
+    140600: '朔州市',
+    140700: '晋中市',
+    140800: '运城市',
+    140900: '忻州市',
+    141000: '临汾市',
+    141100: '吕梁市',
+    150100: '呼和浩特市',
+    150200: '包头市',
+    150300: '乌海市',
+    150400: '赤峰市',
+    150500: '通辽市',
+    150600: '鄂尔多斯市',
+    150700: '呼伦贝尔市',
+    150800: '巴彦淖尔市',
+    150900: '乌兰察布市',
+    152200: '兴安盟',
+    152500: '锡林郭勒盟',
+    152900: '阿拉善盟',
+    210100: '沈阳市',
+    210200: '大连市',
+    210300: '鞍山市',
+    210400: '抚顺市',
+    210500: '本溪市',
+    210600: '丹东市',
+    210700: '锦州市',
+    210800: '营口市',
+    210900: '阜新市',
+    211000: '辽阳市',
+    211100: '盘锦市',
+    211200: '铁岭市',
+    211300: '朝阳市',
+    211400: '葫芦岛市',
+    220100: '长春市',
+    220200: '吉林市',
+    220300: '四平市',
+    220400: '辽源市',
+    220500: '通化市',
+    220600: '白山市',
+    220700: '松原市',
+    220800: '白城市',
+    222400: '延边朝鲜族自治州',
+    230100: '哈尔滨市',
+    230200: '齐齐哈尔市',
+    230300: '鸡西市',
+    230400: '鹤岗市',
+    230500: '双鸭山市',
+    230600: '大庆市',
+    230700: '伊春市',
+    230800: '佳木斯市',
+    230900: '七台河市',
+    231000: '牡丹江市',
+    231100: '黑河市',
+    231200: '绥化市',
+    232700: '大兴安岭地区',
+    310100: '上海市',
+    320100: '南京市',
+    320200: '无锡市',
+    320300: '徐州市',
+    320400: '常州市',
+    320500: '苏州市',
+    320600: '南通市',
+    320700: '连云港市',
+    320800: '淮安市',
+    320900: '盐城市',
+    321000: '扬州市',
+    321100: '镇江市',
+    321200: '泰州市',
+    321300: '宿迁市',
+    330100: '杭州市',
+    330200: '宁波市',
+    330300: '温州市',
+    330400: '嘉兴市',
+    330500: '湖州市',
+    330600: '绍兴市',
+    330700: '金华市',
+    330800: '衢州市',
+    330900: '舟山市',
+    331000: '台州市',
+    331100: '丽水市',
+    340100: '合肥市',
+    340200: '芜湖市',
+    340300: '蚌埠市',
+    340400: '淮南市',
+    340500: '马鞍山市',
+    340600: '淮北市',
+    340700: '铜陵市',
+    340800: '安庆市',
+    341000: '黄山市',
+    341100: '滁州市',
+    341200: '阜阳市',
+    341300: '宿州市',
+    341500: '六安市',
+    341600: '亳州市',
+    341700: '池州市',
+    341800: '宣城市',
+    350100: '福州市',
+    350200: '厦门市',
+    350300: '莆田市',
+    350400: '三明市',
+    350500: '泉州市',
+    350600: '漳州市',
+    350700: '南平市',
+    350800: '龙岩市',
+    350900: '宁德市',
+    360100: '南昌市',
+    360200: '景德镇市',
+    360300: '萍乡市',
+    360400: '九江市',
+    360500: '新余市',
+    360600: '鹰潭市',
+    360700: '赣州市',
+    360800: '吉安市',
+    360900: '宜春市',
+    361000: '抚州市',
+    361100: '上饶市',
+    370100: '济南市',
+    370200: '青岛市',
+    370300: '淄博市',
+    370400: '枣庄市',
+    370500: '东营市',
+    370600: '烟台市',
+    370700: '潍坊市',
+    370800: '济宁市',
+    370900: '泰安市',
+    371000: '威海市',
+    371100: '日照市',
+    371300: '临沂市',
+    371400: '德州市',
+    371500: '聊城市',
+    371600: '滨州市',
+    371700: '菏泽市',
+    410100: '郑州市',
+    410200: '开封市',
+    410300: '洛阳市',
+    410400: '平顶山市',
+    410500: '安阳市',
+    410600: '鹤壁市',
+    410700: '新乡市',
+    410800: '焦作市',
+    410900: '濮阳市',
+    411000: '许昌市',
+    411100: '漯河市',
+    411200: '三门峡市',
+    411300: '南阳市',
+    411400: '商丘市',
+    411500: '信阳市',
+    411600: '周口市',
+    411700: '驻马店市',
+    420100: '武汉市',
+    420200: '黄石市',
+    420300: '十堰市',
+    420500: '宜昌市',
+    420600: '襄阳市',
+    420700: '鄂州市',
+    420800: '荆门市',
+    420900: '孝感市',
+    421000: '荆州市',
+    421100: '黄冈市',
+    421200: '咸宁市',
+    421300: '随州市',
+    422800: '恩施土家族苗族自治州',
+    430100: '长沙市',
+    430200: '株洲市',
+    430300: '湘潭市',
+    430400: '衡阳市',
+    430500: '邵阳市',
+    430600: '岳阳市',
+    430700: '常德市',
+    430800: '张家界市',
+    430900: '益阳市',
+    431000: '郴州市',
+    431100: '永州市',
+    431200: '怀化市',
+    431300: '娄底市',
+    433100: '湘西土家族苗族自治州',
+    440100: '广州市',
+    440200: '韶关市',
+    440300: '深圳市',
+    440400: '珠海市',
+    440500: '汕头市',
+    440600: '佛山市',
+    440700: '江门市',
+    440800: '湛江市',
+    440900: '茂名市',
+    441200: '肇庆市',
+    441300: '惠州市',
+    441400: '梅州市',
+    441500: '汕尾市',
+    441600: '河源市',
+    441700: '阳江市',
+    441800: '清远市',
+    441900: '东莞市',
+    442000: '中山市',
+    445100: '潮州市',
+    445200: '揭阳市',
+    445300: '云浮市',
+    450100: '南宁市',
+    450200: '柳州市',
+    450300: '桂林市',
+    450400: '梧州市',
+    450500: '北海市',
+    450600: '防城港市',
+    450700: '钦州市',
+    450800: '贵港市',
+    450900: '玉林市',
+    451000: '百色市',
+    451100: '贺州市',
+    451200: '河池市',
+    451300: '来宾市',
+    451400: '崇左市',
+    460100: '海口市',
+    460200: '三亚市',
+    460300: '三沙市',
+    460400: '儋州市',
+    500100: '重庆市',
+    510100: '成都市',
+    510300: '自贡市',
+    510400: '攀枝花市',
+    510500: '泸州市',
+    510600: '德阳市',
+    510700: '绵阳市',
+    510800: '广元市',
+    510900: '遂宁市',
+    511000: '内江市',
+    511100: '乐山市',
+    511300: '南充市',
+    511400: '眉山市',
+    511500: '宜宾市',
+    511600: '广安市',
+    511700: '达州市',
+    511800: '雅安市',
+    511900: '巴中市',
+    512000: '资阳市',
+    513200: '阿坝藏族羌族自治州',
+    513300: '甘孜藏族自治州',
+    513400: '凉山彝族自治州',
+    520100: '贵阳市',
+    520200: '六盘水市',
+    520300: '遵义市',
+    520400: '安顺市',
+    520500: '毕节市',
+    520600: '铜仁市',
+    522300: '黔西南布依族苗族自治州',
+    522600: '黔东南苗族侗族自治州',
+    522700: '黔南布依族苗族自治州',
+    530100: '昆明市',
+    530300: '曲靖市',
+    530400: '玉溪市',
+    530500: '保山市',
+    530600: '昭通市',
+    530700: '丽江市',
+    530800: '普洱市',
+    530900: '临沧市',
+    532300: '楚雄彝族自治州',
+    532500: '红河哈尼族彝族自治州',
+    532600: '文山壮族苗族自治州',
+    532800: '西双版纳傣族自治州',
+    532900: '大理白族自治州',
+    533100: '德宏傣族景颇族自治州',
+    533300: '怒江傈僳族自治州',
+    533400: '迪庆藏族自治州',
+    540100: '拉萨市',
+    540200: '日喀则市',
+    540300: '昌都市',
+    540400: '林芝市',
+    540500: '山南市',
+    540600: '那曲市',
+    542500: '阿里地区',
+    610100: '西安市',
+    610200: '铜川市',
+    610300: '宝鸡市',
+    610400: '咸阳市',
+    610500: '渭南市',
+    610600: '延安市',
+    610700: '汉中市',
+    610800: '榆林市',
+    610900: '安康市',
+    611000: '商洛市',
+    620100: '兰州市',
+    620200: '嘉峪关市',
+    620300: '金昌市',
+    620400: '白银市',
+    620500: '天水市',
+    620600: '武威市',
+    620700: '张掖市',
+    620800: '平凉市',
+    620900: '酒泉市',
+    621000: '庆阳市',
+    621100: '定西市',
+    621200: '陇南市',
+    622900: '临夏回族自治州',
+    623000: '甘南藏族自治州',
+    630100: '西宁市',
+    630200: '海东市',
+    632200: '海北藏族自治州',
+    632300: '黄南藏族自治州',
+    632500: '海南藏族自治州',
+    632600: '果洛藏族自治州',
+    632700: '玉树藏族自治州',
+    632800: '海西蒙古族藏族自治州',
+    640100: '银川市',
+    640200: '石嘴山市',
+    640300: '吴忠市',
+    640400: '固原市',
+    640500: '中卫市',
+    650100: '乌鲁木齐市',
+    650200: '克拉玛依市',
+    650400: '吐鲁番市',
+    650500: '哈密市',
+    652300: '昌吉回族自治州',
+    652700: '博尔塔拉蒙古自治州',
+    652800: '巴音郭楞蒙古自治州',
+    652900: '阿克苏地区',
+    653000: '克孜勒苏柯尔克孜自治州',
+    653100: '喀什地区',
+    653200: '和田地区',
+    654000: '伊犁哈萨克自治州',
+    654200: '塔城地区',
+    654300: '阿勒泰地区',
+    710000: '台湾',
+    810000: '香港',
+    820000: '澳门'
+  };
+    var cluster, markers = [], all = {};
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        // center: [116.397428, 39.90923],
+        zooms: [4, 8],
+        zoom: 8,
+        features: ['bg', 'point', 'road']
+    });
+    
+    //定位设备的位置
+      let geolocation = new AMap.Geolocation({
+          enableHighAccuracy: true,//是否使用高精度定位，默认:true
+          timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+          maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+          convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+          showButton: true,        //显示定位按钮，默认：true
+          buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+          buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+          showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+          showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+          panToLocation: true,     //定位成功后将定位到的位置作为地图中心点，默认：true
+          zoomToAccuracy:true      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+      });
+
+      var geocoder = new AMap.Geocoder({
+          city: "010", //城市设为北京，默认：“全国”
+          radius: 1000 //范围，默认：500
+      });
+      console.log("geolocation")
+
+        map.addControl(geolocation);
+        geolocation.getCurrentPosition(function(status,result){
+            if(status=='complete'){
+                // onComplete(result)
+              console.log(result);
+              geocoder.getAddress(result.position, function(status, res) {
+                if (status === 'complete'&&res.regeocode) {
+                    var address = res.regeocode;
+                }else{
+                    log.error('根据经纬度查询地址失败')
+                }
+            });
+            }else{
+              console.error(result);
+            }
+        });
+    
+    //缩放事件
+    var logMapinfo = function (){
+        var zoom = map.getZoom(); //获取当前地图级别
+        document.querySelector("#map-zoom").innerText = zoom;
+    };
+    logMapinfo();
+
+    function mapZoomstart(){
+        document.querySelector("#text").innerText = '缩放开始';
+    }
+    function mapZoom(){
+        logMapinfo();
+        document.querySelector("#text").innerText = '正在缩放';
+    }
+    function mapZoomend(){
+        document.querySelector("#text").innerText = '缩放结束';
+    }
+        
+    // 事件绑定
+    function zoomOn(){  
+        map.on('zoomstart', mapZoomstart);
+        map.on('zoomchange', mapZoom);
+        map.on('zoomend', mapZoomend);
+    }
+    // 解绑事件
+    function zoomOff(){
+        map.off('zoomstart', mapZoomstart);
+        map.off('zoomchange', mapZoom);
+        map.off('zoomend', mapZoomend);
+    }
+
+    zoomOn();
+
+    /* for(let i = 0; i < 5000; i++) {
+      markers.push(m());
+    } */
+
+    function m() {
+        
+        city_position.forEach(item => {
+            let count = random(1, 99)
+            let marker = new AMap.Marker({
+                count,
+                content: "<span class='nav'>" +random(1, 99)+ "</span>",
+                // icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+                position: [item.center.lng, item.center.lat],
+                // offset: new AMap.Pixel(-13, -30)
+            });
+          //   marker.setMap(map);
+          markers.push(marker);
+            map.add(marker);
+        })
+    }
+    m();
+
+    //海量点
+    /* var style = [{
+        url: 'https://a.amap.com/jsapi_demos/static/images/mass0.png',
+        anchor: new AMap.Pixel(6, 6),
+        size: new AMap.Size(11, 11)
+    }, {
+        url: 'https://a.amap.com/jsapi_demos/static/images/mass1.png',
+        anchor: new AMap.Pixel(4, 4),
+        size: new AMap.Size(7, 7)
+    }, {
+        url: 'https://a.amap.com/jsapi_demos/static/images/mass2.png',
+        anchor: new AMap.Pixel(3, 3),
+        size: new AMap.Size(5, 5)
+    }];
+
+    var mass = new AMap.MassMarks(citys, {
+        opacity: 0.8,
+        zIndex: 111,
+        cursor: 'pointer',
+        style: style
+    });
+
+    // var marker = new AMap.Marker({content: ' ', map: map});
+    mass.setMap(map); */
+
+
+    function random(min, max) {
+      return Math.floor(Math.random()*(max-min+1)+min);
+    }
+
+    //跑去指定城市
+    function gotoCity() {
+      var val = document.querySelector('#city-name').value; //可以是cityname、adcode、citycode
+      if (!val) {
+        val = "北京市";
+      }
+      map.setCity(val, () => {
+        console.info(`已跳转至${val}`);
+        var center = map.getCenter(); //获取当前地图中心位置
+        document.querySelector("#map-center").innerText = center.toString();
+      });
+    }
+
+    let cityss = Object.keys(city_list);
+    console.log("cityss",cityss.length)
+    function gotoC() {
+        if (cityss.length === 0) {
+            console.log(JSON.stringify(all));
+            return false;
+        }
+        let val = "北京市";
+        val = cityss.shift();
+        let current = city_list[val];
+        console.log(current);
+        console.log(val);
+        map.setCity(val, () => {
+            console.log("准备遍历所有城市的坐标")
+            console.info(`已跳转至${val}`);
+            var center = map.getCenter(); //获取当前地图中心位置
+            /* all.push({
+                code: val,
+                name: current,
+                center
+            }) */
+            all[val] = {
+                name: current,
+                position: [center.lng, center.lat]
+            }
+            gotoC();
+        });
+    }
+
+    document.querySelector('#query').onclick = gotoCity;
+    document.querySelector('#all').onclick = gotoC;
+
+
+
+    var count = markers.length;
+    var _renderClusterMarker = function (context) {
+        /* var factor = Math.pow(context.count / count, 1 / 18);
+        var div = document.createElement('div');
+        var Hue = 180 - factor * 180;
+        var bgColor = 'hsla(' + Hue + ',100%,50%,0.7)';
+        var fontColor = 'hsla(' + Hue + ',100%,20%,1)';
+        var borderColor = 'hsla(' + Hue + ',100%,40%,1)';
+        var shadowColor = 'hsla(' + Hue + ',100%,50%,1)';
+        div.style.backgroundColor = bgColor; */
+        console.log(context);
+        let count = 0;
+        context.markers.forEach(item => {
+            count += item.w.count
+        })
+        var size = Math.round(30 + Math.pow(context.count / count, 1 / 5) * 20);
+        /* div.style.width = div.style.height = size + 'px';
+        div.style.border = 'solid 1px ' + borderColor;
+        div.style.borderRadius = size / 2 + 'px';
+        div.style.boxShadow = '0 0 1px ' + shadowColor;
+        div.innerHTML = context.count;
+        div.style.lineHeight = size + 'px';
+        div.style.color = fontColor;
+        div.style.fontSize = '14px';
+        div.style.textAlign = 'center'; */
+        let span = document.createElement('span');
+        span.className = "nav";
+        span.innerHTML = count;
+        context.marker.setOffset(new AMap.Pixel(-size / 2, -size / 2));
+        context.marker.setContent(span)
+    };
+
+    addCluster(2);
+
+
+
+    function addCluster(tag) {
+        if (cluster) {
+            cluster.setMap(null);
+        }
+        if (tag == 2) {//完全自定义
+            cluster = new AMap.MarkerClusterer(map, markers, {
+                gridSize: 120,
+                renderClusterMarker: _renderClusterMarker
+            });
+        } else if (tag == 1) {//自定义图标
+            var sts = [{
+                url: "https://a.amap.com/jsapi_demos/static/images/blue.png",
+                size: new AMap.Size(32, 32),
+                offset: new AMap.Pixel(-16, -16)
+            }, {
+                url: "https://a.amap.com/jsapi_demos/static/images/green.png",
+                size: new AMap.Size(32, 32),
+                offset: new AMap.Pixel(-16, -16)
+            }, {
+                url: "https://a.amap.com/jsapi_demos/static/images/orange.png",
+                size: new AMap.Size(36, 36),
+                offset: new AMap.Pixel(-18, -18)
+            }, {
+                url: "https://a.amap.com/jsapi_demos/static/images/red.png",
+                size: new AMap.Size(48, 48),
+                offset: new AMap.Pixel(-24, -24)
+            }, {
+                url: "https://a.amap.com/jsapi_demos/static/images/darkRed.png",
+                size: new AMap.Size(48, 48),
+                offset: new AMap.Pixel(-24, -24)
+            }];
+            cluster = new AMap.MarkerClusterer(map, markers, {
+                styles: sts,
+                gridSize: 120
+            });
+        } else {//默认样式
+            cluster = new AMap.MarkerClusterer(map, markers, {gridSize: 120});
+        }
+    }
+
+    //给地图上色
+    var SOC = 'CHN'
+var colors = {};
+var GDPSpeed = {
+    '520000':10,//贵州
+    '540000':10,//西藏
+    '530000':8.5,//云南 
+    '500000':8.5,//重庆
+    '360000':8.5,//江西
+    '340000':8.0,//安徽
+    '510000':7.5,//四川
+    '350000':8.5,//福建
+    '430000':8.0,//湖南
+    '420000':7.5, //湖北
+    '410000':7.5,//河南
+    '330000':7.0,//浙江
+    '640000':7.5,//宁夏
+    '650000':7.0,//新疆
+    '440000':7.0,//广东
+    '370000':7.0,//山东
+    '450000':7.3,//广西
+    '630000':7.0,//青海
+    '320000':7.0,//江苏
+    '140000':6.5,//山西
+    '460000':7,// 海南
+    '310000':6.5,//上海
+    '110000':6.5, // 北京
+    '130000':6.5, // 河北
+    '230000':6, // 黑龙江
+    '220000':6,// 吉林
+    '210000':6.5, //辽宁
+    '150000':6.5,//内蒙古
+    '120000':5,// 天津
+    '620000':6,// 甘肃
+    '610000':8.5,// 甘肃
+    '710000':2.64, //台湾
+    '810000':3.0, //香港
+    '820000':4.7 //澳门
+}
+
+// map.addControl(new AMap.Scale());
+// map.addControl(new AMap.ToolBar({liteStyle:true}));
+map.on('complete',function(){
+    var layer = new AMap.LabelsLayer({
+        // 开启标注避让，默认为开启，v1.4.15 新增属性
+        collision: false,
+        // 开启标注淡入动画，默认为开启，v1.4.15 新增属性
+        animation: true,
+        style: {
+            zooms: [3, 6],
+        }
+    })
+    console.log(JSON.stringify(LabelsData))
+    LabelsData.forEach(item => {
+        item.text.zooms = [2, 4];
+        item.text.style.fillColor = "#666";
+        item.text.style.strokeColor = "#666";
+        item.text.style.strokeWidth = 1;
+        let labelsMarker = new AMap.LabelMarker(item);
+        layer.add(labelsMarker);
+    })
+    /* for (var i = 0; i < LabelsData.length; i++) {
+        var labelsMarker = new AMap.LabelMarker(LabelsData[i], {
+            style: {
+                zooms: [3, 6],
+            }
+        });
+        layer.add(labelsMarker);
+    } */
+    map.add(layer);
+})
+
+
+
+
+
+
+    /* //解析定位结果
+    function onComplete(data) {
+        document.getElementById('status').innerHTML='定位成功'
+        var str = [];
+        str.push('定位结果：' + data.position);
+        str.push('定位类别：' + data.location_type);
+        if(data.accuracy){
+             str.push('精度：' + data.accuracy + ' 米');
+        }//如为IP精确定位结果则没有精度信息
+        str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
+        document.getElementById('result').innerHTML = str.join('<br>');
+    }
+    //解析定位错误信息
+    function onError(data) {
+        document.getElementById('status').innerHTML='定位失败'
+        document.getElementById('result').innerHTML = '失败原因排查信息:'+data.message;
+    } */
+    
+
+</script>
+</body>
+</html>
