@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <canvas id="canvas" width="900" height="450"></canvas>
+
+  <script>
+    //绘制简单矩形
+    let canvas = document.querySelector("#canvas"),
+      context = canvas.getContext("2d");
+    context.lineJoin = 'round';
+    context.lineWidth = 30;
+    context.font = '24px Helvetica';
+    context.fillText('click anywhere to erase', 175, 40);
+    context.strokeRect(75, 100, 200, 200);
+    context.fillStyle = '(0, 0, 255, 0.5)';
+    context.fillRect(325, 100, 200, 200);
+    context.canvas.onmousedown = function (e) {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  </script>
+</body>
+</html>

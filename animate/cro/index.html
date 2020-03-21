@@ -1,0 +1,46 @@
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>内凹圆角</title>
+<style type="text/css">
+    .main {
+     position: relative;
+     width: 200px;
+     height: 40px;
+     margin: 0 5px;
+     background: -webkit-linear-gradient(left, #F6327C, #DF3DF0);
+     background: linear-gradient(to right, #F6327C, #DF3DF0);
+ }
+ .main::before {
+     position: absolute;
+     content: "";
+     display: block;
+     position: absolute;
+     top: 0;
+     left: -5px;
+     width: 5px;
+     height: 40px;
+     border-radius: 2px 0 0 2px;
+     background: -webkit-radial-gradient(10px at left,transparent 50%,#F6327C 50%);
+     background: radial-gradient(10px at left,transparent 50%,#F6327C 50%);
+ }
+ .main::after {
+     position: absolute;
+     content: "";
+     display: block;
+     position: absolute;
+     top: 0;
+     right: -5px;
+     width: 5px;
+     height: 40px;
+     border-radius: 0 2px 2px 0;
+     background: -webkit-radial-gradient(10px at right,transparent 50%,#F6327C 50%);
+     background: radial-gradient(10px at right,transparent 50%,#F6327C 50%);
+ }
+</style>
+</head>
+<body>
+  <div class="main"></div>
+
+</body>
+</html>
