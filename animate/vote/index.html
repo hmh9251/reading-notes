@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>投票</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+
+  <div id="vote" class="vote-container">
+    <div class="item">
+      <div class="text">001</div>
+      <div class="progress"></div>
+      <div class="selected"><img src="./selected.png" alt=""></div>
+      <div class="total">100</div>
+    </div>
+    <div class="item">
+      <div class="text">001q</div>
+      <div class="progress"></div>
+      <div class="selected"><img src="./selected.png" alt=""></div>
+      <div class="total">100</div>
+    </div>
+    <div class="item">
+      <div class="text">001fqweq</div>
+      <div class="progress"></div>
+      <div class="selected"><img src="./selected.png" alt=""></div>
+      <div class="total">100</div>
+    </div>
+    <div class="item">
+      <div class="text">001</div>
+      <div class="progress"></div>
+      <div class="selected"><img src="./selected.png" alt=""></div>
+      <div class="total">100</div>
+    </div>
+    <div class="item">
+      <div class="text">001fqwedfq</div>
+      <div class="progress"></div>
+      <div class="selected"><img src="./selected.png" alt=""></div>
+      <div class="total">100</div>
+    </div>
+  </div>
+  
+  <script>
+    let vote = document.querySelector("#vote");
+    let data = [
+      {
+        label: "去上海看外滩",
+        total: 807
+      },
+      {
+        label: "去北京看故宫",
+        total: 2341
+      },
+      {
+        label: "去老家玩",
+        total: 1123
+      },
+      {
+        label: "去长城玩",
+        total: 2001
+      }
+    ];
+    let count = data.reduce((total, next) => {
+      if (typeof total === "number") {
+        return total + next.total;
+      }
+      return total.total + next.total
+    });
+
+    let html = "";
+    data.forEach(item => {
+      let per = (1 - (item.total / count)) * 100;
+      html += '<div class="item">';
+      html += `<div class="text">${item.label}</div>`
+      html += `<div class="progress" data-per="${per}"></div>`
+      html += `<div class="total"><img class="selected" src="./selected.png" alt="">${item.total}</div>`
+      html += '</div>'
+    })
+    vote.innerHTML = html;
+
+    
+    Array.prototype.slice.call(vote.querySelectorAll(".item")).forEach(item => {
+      item.addEventListener("click", e => {
+        vote.classList.toggle("select");
+        Array.prototype.slice.call(vote.querySelectorAll(".progress")).forEach(item => {
+          let style = item.style.right;
+          if (style) {
+            item.style.right = "";
+          } else {
+            item.style.right = item.dataset.per + "%";
+          }
+        })
+      })
+    })
+
+  </script>
+  
+</body>
+</html>
