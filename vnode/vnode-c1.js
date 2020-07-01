@@ -1,3 +1,5 @@
+
+
 const VNodeFlags = {
   // html 标签
   ELEMENT_HTML: 1,
@@ -20,6 +22,8 @@ const VNodeFlags = {
   // Portaly
   PORTAL: 1 << 8,
 };
+
+
 
 // html 和 svg 都是标签元素，可以用 ELEMENT 表示
 VNodeFlags.ELEMENT = VNodeFlags.ELEMENT_HTML | VNodeFlags.ELEMENT_SVG;
@@ -50,6 +54,8 @@ ChildrenFlags.MULTIPLE_VNODES =
   ChildrenFlags.KEYED_VNODES | ChildrenFlags.NONE_KEYED_VNODES;
 
 /* 
+
+
 export interface VNode {
   // _isVNode 属性在上文中没有提到，它是一个始终为 true 的值，有了它，我们就可以判断一个对象是否是 VNode 对象
   _isVNode: true
@@ -61,7 +67,10 @@ export interface VNode {
   children: VNodeChildren
   childFlags: ChildrenFlags
 }
+
+
 */
+
 const Fragment = Symbol();
 const Portal = Symbol();
 
