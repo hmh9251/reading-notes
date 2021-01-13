@@ -10,7 +10,6 @@
     <div id="portal-box"></div>
     <script src="vnode-c1.js"></script>
     <script>
-
       // VNode
       /* const elementVnode = h("div", {
         style: {
@@ -124,7 +123,7 @@
       }, 2000); */
 
       // 旧的 VNode
-      const prevVNode = h('p', null, '旧文本')
+      /* const prevVNode = h('p', null, '旧文本')
 
       // 新的 VNode
       const nextVNode = h('p', null, '新文本')
@@ -134,7 +133,37 @@
       // 2秒后更新
       setTimeout(() => {
         render(nextVNode, document.getElementById('app'))
-      }, 2000)
+      }, 2000) */
+      class ChildComponent1 {
+        render() {
+          return h("div", null, "子组件 1");
+        }
+      }
+      // 子组件类 2
+      class ChildComponent2 {
+        render() {
+          return h("div", null, "子组件 2");
+        }
+      }
+      // 父组件类
+      class ParentComponent {
+        isTrue = true;
+
+        mounted() {
+          setTimeout(() => {
+            this.isTrue = false;
+            this._update();
+          }, 2000);
+        }
+
+        render() {
+          return this.isTrue ? h(ChildComponent1) : h(ChildComponent2);
+        }
+      }
+      // 有状态组件 VNode
+      const compVNode = h(ParentComponent);
+
+      render(compVNode, document.getElementById("app"));
     </script>
   </body>
 </html>

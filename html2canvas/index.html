@@ -1,0 +1,38 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2020-08-18 19:15:30
+ * @LastEditors: kexi
+ * @LastEditTime: 2020-08-18 19:18:33
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    dqfqwef
+    qwefqwfqw
+    fqewfqwfqf
+    <p>fqewfqewfe</p>
+    <p>fqefqef</p>
+    <p>fqefqef</p>
+  </div>
+  <button id="action">点击</button>
+  
+  <script src="./html2canvas.js"></script>
+  <script>
+    document.querySelector("#action").addEventListener("click", function() {
+      html2canvas(document.querySelector("#app")).then(canvas => {
+        let url = canvas.toDataURL();
+        let img = new Image();
+        img.src = url;
+        document.body.appendChild(img);
+      })
+    });
+  </script>
+</body>
+</html>

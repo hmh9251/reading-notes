@@ -330,13 +330,36 @@ function mountComponent(vnode, container, isSVG) {
 
 function mountStatefulComponent(vnode, container, isSVG) {
   // 创建组件实例
-  const instance = new vnode.tag()
-  // 渲染VNode
-  instance.$vnode = instance.render()
-  // 挂载
-  mount(instance.$vnode, container, isSVG)
-  // el 属性值 和 组件实例的 $el 属性都引用组件的根DOM元素
-  instance.$el = vnode.el = instance.$vnode.el
+  const instance = (vnode.children = new vnode.tag())
+  // 初始化 props
+  instance.$props = vnode.data
+
+  instance._update = function() {
+    if (instance._mounted) {
+      // 更新
+      // 1、拿到旧的 VNode
+      const prevVNode = instance.$vnode
+      // 2、重渲染新的 VNode
+      const nextVNode = (instance.$vnode = instance.render())
+      // 3、patch 更新
+      patch(prevVNode, nextVNode, prevVNode.el.parentNode)
+      // 4、更新 vnode.el 和 $el
+      instance.$el = vnode.el = instance.$vnode.el
+    } else {
+      // 1、渲染VNode
+      instance.$vnode = instance.render()
+      // 2、挂载
+      mount(instance.$vnode, container, isSVG)
+      // 3、组件已挂载的标识
+      instance._mounted = true
+      // 4、el 属性值 和 组件实例的 $el 属性都引用组件的根DOM元素
+      instance.$el = vnode.el = instance.$vnode.el
+      // 5、调用 mounted 钩子
+      instance.mounted && instance.mounted()
+    }
+  }
+
+  instance._update()
 }
 
 function mountFunctionalComponent(vnode, container, isSVG) {
@@ -569,4 +592,29 @@ function patchPortal(prevVNode, nextVNode) {
         break
     }
   }
+}
+
+function patchComponent(prevVNode, nextVNode, container) {
+  // tag 属性的值是组件类，通过比较新旧组件类是否相等来判断是否是相同的组件
+  if (nextVNode.tag !== prevVNode.tag) {
+    replaceVNode(prevVNode, nextVNode, container)
+  } else if (nextVNode.flags & VNodeFlags.COMPONENT_STATEFUL_NORMAL) {
+    // 获取组件实例
+    const instance = (nextVNode.children = prevVNode.children)
+    // 更新 props
+    instance.$props = nextVNode.data
+    // 更新组件
+    instance._update()
+  }
+}
+
+function replaceVNode(prevVNode, nextVNode, container) {
+  container.removeChild(prevVNode.el)
+  // 如果将要被移除的 VNode 类型是组件，则需要调用该组件实例的 unmounted 钩子函数
+  if (prevVNode.flags & VNodeFlags.COMPONENT_STATEFUL_NORMAL) {
+    // 类型为有状态组件的 VNode，其 children 属性被用来存储组件实例对象
+    const instance = prevVNode.children
+    instance.unmounted && instance.unmounted()
+  }
+  mount(nextVNode, container)
 }
