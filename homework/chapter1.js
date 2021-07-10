@@ -81,6 +81,8 @@ function isDecimals(num) {
   return false;
 }
 
-let to64 = transition10to64(1000000.121233412312312);
+let num = parseFloat(Math.random()*100000000 + Math.random);
+console.log(num);
+let to64 = transition10to64(num);
 console.log(to64);
 console.log(transition64to10(to64));
