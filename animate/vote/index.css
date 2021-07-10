@@ -1,0 +1,72 @@
+.vote-container {
+  padding: 15px;
+  width: 335px;
+  margin: auto;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+}
+
+.vote-container .item {
+  width: 100%;
+  height: 40px;
+  background: #fff;
+  border-radius: 5px;
+  border: 1px solid #eee;
+  line-height: 40px;
+  transition: all 1s;
+  position: relative;
+  /* text-align: center; */
+}
+
+.vote-container .item .text {
+  text-align: center;
+  display: inline-block;
+  transition: all 0.7s;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.vote-container .item .progress {
+  position: absolute;
+  transition: all 0.3s;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 100%;
+  background: #EFF3F6;
+  z-index: 0;
+}
+
+.vote-container.select .item .progress {
+  right: 90%;
+}
+
+.vote-container.select .item .text {
+  max-width: 10px;
+}
+.vote-container.select .item .total {
+  opacity: 1;
+}
+.vote-container .item .total {
+  transition: all 0.7s;
+  opacity: 0;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+}
+
+.vote-container .item .total img {
+  width: 14px;
+  margin-right: 5px;
+}
+
+.vote-container .item .selected {
+  display: none;
+}
+
+

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="element"></div>
+  <script src="../../node_modules/lottie-web/build/player/lottie.js"></script>
+  <script>
+
+    lottie.loadAnimation({
+      container: document.getElementById('element'), // the dom element that will contain the animation
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'data.json' // the path to the animation json
+    });
+  </script>
+</body>
+</html>

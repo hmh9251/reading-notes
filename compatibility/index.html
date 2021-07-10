@@ -1,0 +1,46 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2021-02-02 16:02:30
+ * @LastEditors: kexi
+ * @LastEditTime: 2021-02-02 16:05:48
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>ios android 兼容性问题</h1>
+  <p>ios android 弹窗穿透滚动的问题</p>
+  <p>css:</p>
+  <code>
+    body {
+      &.dialog-open-ios {
+        overflow: hidden;
+      }
+      &.dialog-open-android {
+        position: fixed;
+        width: 100%;
+      }
+    }
+  </code>
+  <p>js:</p>
+  <code>
+    const banScrollClass = "dialog-open-" + OS;
+    banScroll = function() {
+      scrollTop = document.scrollingElement.scrollTop;
+      document.body.classList.add(banScrollClass);
+      document.body.style.top = -scrollTop + "px";
+    };
+
+    unbanScroll = function() {
+      document.body.classList.remove(banScrollClass);
+      // scrollTop lost after set position:fixed, restore it back.
+      document.scrollingElement.scrollTop = scrollTop;
+    };
+  </code>
+</body>
+</html>

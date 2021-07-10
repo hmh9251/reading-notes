@@ -1,0 +1,47 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2020-03-14 12:23:06
+ * @LastEditors: kexi
+ * @LastEditTime: 2020-07-10 11:20:38
+--> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{ message }}</p>
+    <p>{{ a }}</p>
+    <p>{{ b }}</p>
+    <p>{{ c }}</p>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+  <script>
+    let vm = new Vue({
+      el: "#app",
+      data() {
+        return {
+          message: "aaa",
+          _abc: "_abc"
+        }
+      },
+      methods: {
+        setData() {
+          this.a = "a";
+          this.b = "b";
+          this.c = "c";
+        }
+      }
+    })
+    console.log(vm);
+
+    console.log(vm);
+    console.log(vm);
+    console.log(vm);
+  </script>
+</body>
+</html>

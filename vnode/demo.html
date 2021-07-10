@@ -1,0 +1,43 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2020-07-10 11:17:48
+ * @LastEditors: kexi
+ * @LastEditTime: 2020-07-10 12:06:15
+--> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>1</p>
+    <p>3</p>
+    <p>2</p>
+
+    class ParentComponent ;
+
+    const compVNode = h(ParentComponent); //创建vnode 设定了vnode类型
+
+    render(compVNode, document.getElementById("app"));
+
+    mount(compVNode, document.getElementById("app")); //判断vnode类型
+
+    mountComponent(compVNode, document.getElementById("app"));
+
+    mountStatefulComponent(compVNode, document.getElementById("app"), isSVG)
+    obj =  new ParentComponent;
+    obj._update = function
+    obj._update();
+
+    patch函数
+    旧的节点为空 新的存在 渲染
+    旧的节点为单个节点 新的也为单个节点 对比渲染  tag一样就更新里面的子内容 tag不一样 就重新渲染
+    旧的节点为单个节点 新的为多个节点 旧的删除 新的渲染
+    旧的节点为多个节点 新的节点为多个节点 diff
+  </div>
+</body>
+</html>

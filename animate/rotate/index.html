@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+    }
+    .page {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+    }
+    .page img {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      margin: auto;
+      width: 100vw;
+      height: 100vw;
+    }
+    .page2 {
+      background:#60d7a9;
+      opacity: 0;
+    }
+    .out {
+      transform-origin: 50% 50%;
+      animation: rotateOutNewspaper 1s both ease-in;
+    }
+    .in {
+      transform-origin: 50% 50%;
+      animation: rotateInNewspaper 1s both ease-in;
+    }
+    @keyframes rotateOutNewspaper {
+      to { transform: translateZ(-3000px) rotateZ(720deg) scale(0.5); opacity: 0; }
+    }
+
+    @keyframes rotateInNewspaper {
+      to { 
+        /* transform: translateZ(-3000px) rotateZ(360deg);  */
+        opacity: 1; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="out" class="page">
+    <img src="./WechatIMG24.png" alt="">
+  </div>
+  <div id="in" class="page page2"></div>
+  <script>
+    setTimeout(() => {
+      const out = document.getElementById("out");
+      out.classList.add("out")
+      setTimeout(() => {
+        const inn = document.getElementById("in");
+        inn.classList.add("in")
+      }, 1000)
+    }, 1000);
+  </script>
+</body>
+</html>

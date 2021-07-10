@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="portal-box"></div>
+    <script src="vnode-c1.js"></script>
+    <script>
+      // VNode
+      /* const elementVnode = h("div", {
+        style: {
+          width: "100px",
+          height: "100px",
+          backgroundColor: "red",
+        },
+        // 点击事件
+        onclick: handler,
+      }); */
+
+      /* const elementVNode = h(
+        "div",
+        {
+          style: {
+            height: "100px",
+            width: "100px",
+            background: "red",
+          },
+        },
+        "我是文本"
+      ); */
+      /* const elementVNode = h(
+        'div',
+        {
+          style: {
+            height: '100px',
+            width: '100px',
+            background: 'red'
+          }
+        },
+        h(Fragment, null, [
+          h('span', null, '我是标题1......'),
+          h('span', null, '我是标题2......')
+        ])
+      ) */
+      /* const elementVNode = h(
+        "div",
+        {
+          style: {
+            height: "100px",
+            width: "100px",
+            background: "red",
+          },
+        },
+        h(Portal, { target: "#portal-box" }, [
+          h("span", null, "我是标题1......"),
+          h("span", null, "我是标题2......"),
+        ])
+      ); */
+
+      /* function MyFunctionalComponent() {
+        return h(
+          'div',
+          {
+            style: {
+              background: 'green'
+            }
+          },
+          [
+            h('span', null, '我是组件的标题1......'),
+            h('span', null, '我是组件的标题2......')
+          ]
+        )
+      }
+
+      const compVnode = h(MyFunctionalComponent)
+      render(compVnode, document.getElementById('app')); */
+
+      /* const prevVNode = h("div", null, "旧的 VNode");
+
+      class MyComponent {
+        render() {
+          return h("div", null, "新的 VNode");
+        }
+      }
+      const nextVNode = h(MyComponent);
+
+      render(prevVNode, document.getElementById("app"));
+
+      setTimeout(() =>{
+        render(nextVNode, document.getElementById("app"));
+      }, 3000) */
+
+      /* const handler = () => alert("clicked");
+
+      // 旧的 VNode
+      const prevVNode = h("div", {
+        style: {
+          width: "100px",
+          height: "100px",
+          backgroundColor: "red",
+        },
+        onclick: handler,
+      });
+
+      // 新的 VNode
+      const nextVNode = h("div", {
+        style: {
+          width: "100px",
+          height: "100px",
+          border: "1px solid green",
+        },
+      });
+
+      render(prevVNode, document.getElementById("app"));
+
+      // 2秒后更新
+      setTimeout(() => {
+        render(nextVNode, document.getElementById("app"));
+      }, 2000); */
+
+      // 旧的 VNode
+      /* const prevVNode = h('p', null, '旧文本')
+
+      // 新的 VNode
+      const nextVNode = h('p', null, '新文本')
+
+      render(prevVNode, document.getElementById('app'))
+
+      // 2秒后更新
+      setTimeout(() => {
+        render(nextVNode, document.getElementById('app'))
+      }, 2000) */
+      class ChildComponent1 {
+        render() {
+          return h("div", null, "子组件 1");
+        }
+      }
+      // 子组件类 2
+      class ChildComponent2 {
+        render() {
+          return h("div", null, "子组件 2");
+        }
+      }
+      // 父组件类
+      class ParentComponent {
+        isTrue = true;
+
+        mounted() {
+          setTimeout(() => {
+            this.isTrue = false;
+            this._update();
+          }, 2000);
+        }
+
+        render() {
+          return this.isTrue ? h(ChildComponent1) : h(ChildComponent2);
+        }
+      }
+      // 有状态组件 VNode
+      const compVNode = h(ParentComponent);
+
+      render(compVNode, document.getElementById("app"));
+    </script>
+  </body>
+</html>

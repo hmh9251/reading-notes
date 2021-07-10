@@ -1,0 +1,44 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2020-04-21 16:20:23
+ * @LastEditors: kexi
+ * @LastEditTime: 2020-12-14 16:28:49
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>卡片翻转</title>
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="card">
+        <div class="card-face card-front">front</div>
+        <div class="card-face card-back">back</div>
+      </div>
+      <div class="card">
+        <div class="card-face card-front">front</div>
+        <div class="card-face card-back">back</div>
+      </div>
+      <div class="card">
+        <div class="card-face card-front">front</div>
+        <div class="card-face card-back">back</div>
+      </div>
+    </div>
+    <script>
+      let card = document.querySelectorAll(".card")
+      for (let i = 0; i < card.length; i++) {
+        let item = card[i];
+        item.addEventListener("click", e => {
+          item.classList.toggle("active");
+        });
+      }
+     /*  card.addEventListener("click", e => {
+        card.classList.toggle("active");
+      }); */
+    </script>
+  </body>
+</html>
