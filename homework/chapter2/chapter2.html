@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>读取代码文件，编辑并保存</title>
+</head>
+
+<body>
+  <div>
+    <p>读取文件</p>
+    <div><input type="file" id="fileInput" change="change"></div>
+    <div><button id="save" type="button">保存代码</button></div>
+  </div>
+  <div id="container" style="height:500px;"></div>
+  <script src="./require.js"></script>
+  <script>
+    require.config({ paths: { vs: '../../node_modules/monaco-editor/min/vs' } });
+
+    require(['vs/editor/editor.main'], function () {
+      let input = document.getElementById('fileInput');
+      let saveButton = document.getElementById('save');
+      let editor = null;
+      input.addEventListener('change', function () {
+        const reader = new FileReader();
+        reader.onload = function fileReadCompleted() {
+          // 当读取完成时，内容只在`reader.result`中
+          console.log(reader.result);
+          editor = monaco.editor.create(document.getElementById('container'), {
+            value: reader.result,
+            language: 'javascript'
+          });
+        };
+        reader.readAsText(this.files[0]);
+      });
+
+      saveButton.addEventListener('click', function () {
+        // const txt = editor.getValue();
+        // console.log(txt);
+        download('\/\/the content of the file', 'filename.js', 'javascript');
+      })
+
+      function download(strData, strFileName, strMimeType) {
+        var D = document,
+          A = arguments,
+          a = D.createElement("a"),
+          d = A[0],
+          n = A[1],
+          t = A[2] || "text/plain";
+        //build download link:
+        a.href = "data:" + strMimeType + "charset=utf-8," + escape(strData);
+        if (window.MSBlobBuilder) { // IE10
+          var bb = new MSBlobBuilder();
+          bb.append(strData);
+          return navigator.msSaveBlob(bb, strFileName);
+        } /* end if(window.MSBlobBuilder) */
+        if ('download' in a) { //FF20, CH19
+          a.setAttribute("download", n);
+          a.innerHTML = "downloading...";
+          D.body.appendChild(a);
+          setTimeout(function () {
+            var e = D.createEvent("MouseEvents");
+            e.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            a.dispatchEvent(e);
+            D.body.removeChild(a);
+          }, 66);
+          return true;
+        }; /* end if('download' in a) */
+        //do iframe dataURL download: (older W3)
+        var f = D.createElement("iframe");
+        D.body.appendChild(f);
+        f.src = "data:" + (A[2] ? A[2] : "application/octet-stream") + (window.btoa ? ";base64" : "") + "," + (window.btoa ? window.btoa : escape)(strData);
+        setTimeout(function () {
+          D.body.removeChild(f);
+        }, 333);
+        return true;
+      }
+
+
+
+
+    });
+  </script>
+</body>
+
+</html>
