@@ -37,18 +37,19 @@
       });
 
       saveButton.addEventListener('click', function () {
-        // const txt = editor.getValue();
+        const txt = editor.getValue();
         // console.log(txt);
-        download('\/\/the content of the file', 'filename.js', 'javascript');
+        download(txt, 'haldfqew', 'application/javascript');
       })
 
       function download(strData, strFileName, strMimeType) {
+        console.log(strFileName);
         var D = document,
           A = arguments,
           a = D.createElement("a"),
           d = A[0],
           n = A[1],
-          t = A[2] || "text/plain";
+          t = A[2];
         //build download link:
         a.href = "data:" + strMimeType + "charset=utf-8," + escape(strData);
         if (window.MSBlobBuilder) { // IE10
