@@ -1,3 +1,10 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2021-07-13 10:08:32
+ * @LastEditors: kexi
+ * @LastEditTime: 2021-07-13 10:31:18
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,6 +27,12 @@
     require.config({ paths: { vs: '../../node_modules/monaco-editor/min/vs' } });
 
     require(['vs/editor/editor.main'], function () {
+      let types = {
+        'css':'text/css',
+        'html':'text/html',
+        'htm':'text/html',
+        'js':'application/x-javascript'
+      }
       let input = document.getElementById('fileInput');
       let saveButton = document.getElementById('save');
       let editor = null;
@@ -27,7 +40,6 @@
         const reader = new FileReader();
         reader.onload = function fileReadCompleted() {
           // 当读取完成时，内容只在`reader.result`中
-          console.log(reader.result);
           editor = monaco.editor.create(document.getElementById('container'), {
             value: reader.result,
             language: 'javascript'
@@ -38,45 +50,18 @@
 
       saveButton.addEventListener('click', function () {
         const txt = editor.getValue();
-        // console.log(txt);
-        download(txt, 'haldfqew', 'application/javascript');
+        download(txt, 'main.js', 'application/x-javascript');
       })
 
-      function download(strData, strFileName, strMimeType) {
-        console.log(strFileName);
-        var D = document,
-          A = arguments,
-          a = D.createElement("a"),
-          d = A[0],
-          n = A[1],
-          t = A[2];
-        //build download link:
-        a.href = "data:" + strMimeType + "charset=utf-8," + escape(strData);
-        if (window.MSBlobBuilder) { // IE10
-          var bb = new MSBlobBuilder();
-          bb.append(strData);
-          return navigator.msSaveBlob(bb, strFileName);
-        } /* end if(window.MSBlobBuilder) */
-        if ('download' in a) { //FF20, CH19
-          a.setAttribute("download", n);
-          a.innerHTML = "downloading...";
-          D.body.appendChild(a);
-          setTimeout(function () {
-            var e = D.createEvent("MouseEvents");
-            e.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-            a.dispatchEvent(e);
-            D.body.removeChild(a);
-          }, 66);
-          return true;
-        }; /* end if('download' in a) */
-        //do iframe dataURL download: (older W3)
-        var f = D.createElement("iframe");
-        D.body.appendChild(f);
-        f.src = "data:" + (A[2] ? A[2] : "application/octet-stream") + (window.btoa ? ";base64" : "") + "," + (window.btoa ? window.btoa : escape)(strData);
-        setTimeout(function () {
-          D.body.removeChild(f);
-        }, 333);
-        return true;
+      // 通过Blob，以及a标签方式下载
+      function download(content, filename, type) {
+        let data = new Blob([content],{type: type + ";charset=UTF-8"});
+        let downloadUrl = window.URL.createObjectURL(data);
+        let anchor = document.createElement("a");
+        anchor.href = downloadUrl;
+        anchor.download = filename;
+        anchor.click();
+        window.URL.revokeObjectURL(data); 
       }
 
 
