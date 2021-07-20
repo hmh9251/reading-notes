@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <div id="app"></div>
+  
+  <script src="./chapter4.js"></script>
+  <script>
+    const app = document.getElementById('app');
+    let tmpl = `<div class="newslist">
+        <div class="img" v-if="info.showImage"><img src="{{image}}" /></div>
+        <div class="date" v-if="info.showDate">{{info.name}}</div>
+        <div class="img">{{info.name}}</div>
+    </div>`;
+
+    const data = {
+      image: "some img", 
+      info: {
+        showImage: true,
+        showDate:false,
+        name: "aaa"
+      }
+    };
+    const html = parseHTML(tmpl);
+    console.log(html);
+    const dom = parseToHTML(html, data);
+    console.log(dom);
+  </script>
+</body>
+</html>
