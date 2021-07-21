@@ -20,7 +20,7 @@
     </div>`;
 
     const data = {
-      image: "some img", 
+      image: "https://sf3-ttcdn-tos.pstatp.com/img/user-avatar/a9a1f78f2c38cd6a46be07b5c39905c8~300x300.image", 
       info: {
         showImage: true,
         showDate:false,
@@ -31,6 +31,7 @@
     console.log(html);
     const dom = parseToHTML(html, data);
     console.log(dom);
+    app.appendChild(dom);
   </script>
 </body>
 </html>

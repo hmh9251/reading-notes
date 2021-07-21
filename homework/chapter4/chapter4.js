@@ -175,10 +175,18 @@ function parseToHTML(AST, data) {
 function parseTag(dom, data) {
   let f = document.createDocumentFragment();
   let tag = document.createElement(dom.tag);
+  let isRender = true;
+  if(dom.attrsMap['v-if']) {
+    isRender = createFunc(data, dom.attrsMap['v-if']);
+    if (!isRender) return f;
+  }
   if (dom.attrsList) {
     dom.attrsList.forEach(attr => {
       tag.setAttribute(attr.name, attr.value);
     })
+  }
+  if(dom.attrsMap['src']) {
+    tag.setAttribute('src',pText(dom.attrsMap['src'], data));
   }
   if (dom.children) {
     dom.children.forEach(child => {
@@ -199,4 +207,20 @@ function parseText(dom, data) {
     return val;
   })
   return document.createTextNode(text);
+}
+
+function pText(str, data) {
+  return str.replace(/\{\{(.*?)\}\}/g, (s0, s1) => {
+    let props = s1.split(".");
+    let val = data[props[0]];
+    props.slice(1).forEach((item) => {
+      val = val[item];
+    });
+    return val;
+  })
+}
+
+function createFunc(data, exp) {
+  const func = new Function(`with(data){return ${exp}}`)
+  return func();
 }
