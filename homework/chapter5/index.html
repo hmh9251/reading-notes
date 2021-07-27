@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>codepen</title>
+  <style>
+    #container {
+      width: 500px;
+      height: 100vh;
+      display: inline-block;
+    }
+
+    .preview {
+      width: 500px;
+      height: 100vh;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .preview-button {
+      width: 100px;
+      height: 50px;
+      background-color: antiquewhite;
+      border: 1px solid;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container" style="height:500px;"></div>
+  <div class="preview">
+    <button class="preview-button" id="previewButton">预览</button>
+    <hr />
+    <div id="app"></div>
+  </div>
+  <script src="/vue.js"></script>
+  <script src="/require.js"></script>
+  <script>
+    require.config({ paths: { vs: './vs' } });
+
+    require(['vs/editor/editor.main'], function () {
+      let content = `\<template>\n\<\/template\>\n\<script\>\n\<\/script\>`;
+      let editor = monaco.editor.create(document.getElementById('container'), {
+        value: content,
+        language: 'vue'
+      });
+
+      let button = document.getElementById('previewButton');
+      button.addEventListener('click', () => {
+        console.log(editor.getValue());
+      })
+
+      /**
+      * 发送js内容
+      */
+      function send() {
+        let data = { content: 'adfadsfad' }
+        let url = "/compiler"
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: new Headers({
+            'Content-Type': 'application/json'
+          })
+        }).then(res => res.json())
+          .catch(error => console.error('Error:', error))
+          .then(response => console.log('Success:', response));
+      }
+
+
+      /**
+      * 创建vue实例
+      * @param {*} component
+      */
+      function createVue(component) {
+        let app = document.getElementById('app');
+        app.innerHTML = '';
+        app.innerHTML = '<custom></custom>';
+        new Vue({
+          el: '#app',
+          components: {
+            "custom": component
+          }
+        })
+      }
+
+
+    })
+
+
+  </script>
+</body>
+
+</html>
