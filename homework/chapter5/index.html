@@ -1,3 +1,10 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2021-07-28 15:07:54
+ * @LastEditors: kexi
+ * @LastEditTime: 2021-07-28 17:33:21
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -45,19 +52,20 @@
       let content = `\<template>\n\<\/template\>\n\<script\>\n\<\/script\>`;
       let editor = monaco.editor.create(document.getElementById('container'), {
         value: content,
-        language: 'vue'
+        language: 'html'
       });
 
       let button = document.getElementById('previewButton');
       button.addEventListener('click', () => {
-        console.log(editor.getValue());
+        let content = editor.getValue();
+        send(content);
       })
 
       /**
       * 发送js内容
       */
-      function send() {
-        let data = { content: 'adfadsfad' }
+      function send(content) {
+        let data = { content };
         let url = "/compiler"
         fetch(url, {
           method: 'POST',
@@ -67,7 +75,11 @@
           })
         }).then(res => res.json())
           .catch(error => console.error('Error:', error))
-          .then(response => console.log('Success:', response));
+          .then(({ data }) => {
+            if (data === 'success') {
+              addNewModule()
+            }
+          });
       }
 
 
@@ -75,7 +87,8 @@
       * 创建vue实例
       * @param {*} component
       */
-      function createVue(component) {
+      function createVue() {
+        let component = custom.default;
         let app = document.getElementById('app');
         app.innerHTML = '';
         app.innerHTML = '<custom></custom>';
@@ -85,6 +98,19 @@
             "custom": component
           }
         })
+      }
+
+      function addNewModule() {
+        let head = document.querySelector('head');
+        let oldTag = document.querySelector('script[data="dynamic"]');
+        let tag = document.createElement('script');
+        if (oldTag)head.removeChild(oldTag);
+        tag.src = "/bundle.js";
+        tag.setAttribute('data', 'dynamic');
+        tag.onload = () => {
+          createVue();
+        }
+        head.appendChild(tag);
       }
 
 
