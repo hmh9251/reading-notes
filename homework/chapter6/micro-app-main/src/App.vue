@@ -3,7 +3,7 @@
  * @Author: kexi
  * @Date: 2021-07-30 16:36:15
  * @LastEditors: kexi
- * @LastEditTime: 2021-08-03 16:13:04
+ * @LastEditTime: 2021-08-06 16:26:50
 -->
 <template>
   <section class="cns-main-app">
@@ -21,10 +21,20 @@
 </template>
 <script>
 import MainMenu from "@/components/menu/index.vue";
+import actions from "@/shared/actions";
 
 export default {
   components: {
     MainMenu,
+  },
+  created() {
+    actions.onGlobalStateChange((state, prevState) => {
+      // state: 变更后的状态; prevState: 变更前的状态
+      console.log("主应用观察者：token 改变前的值为 ", prevState.token);
+      console.log("主应用观察者：登录状态发生改变，改变后的 token 的值为 ", state.token);
+    });
+    let token = "jfhqfljfekjfjfjvhgjhgjfe";
+    actions.setGlobalState({ token });
   },
   data() {
     return {

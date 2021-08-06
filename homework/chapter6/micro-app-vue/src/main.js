@@ -3,12 +3,13 @@
  * @Author: kexi
  * @Date: 2021-08-02 13:51:43
  * @LastEditors: kexi
- * @LastEditTime: 2021-08-02 15:34:57
+ * @LastEditTime: 2021-08-06 16:30:29
  */
 import Vue from 'vue'
 import App from './App.vue'
 import routes from './router'
 import VueRouter from 'vue-router';
+import actions from "./shared/actions";
 import './public-path.js'
 
 Vue.config.productionTip = false
@@ -18,7 +19,11 @@ Vue.use(VueRouter);
 let instance = null;
 let router = null;
 
-function render() {
+function render(props) {
+  if (props) {
+    // 注入 actions 实例
+    actions.setActions(props);
+  }
   router = new VueRouter({
     base: window.__POWERED_BY_QIANKUN__ ? '/vue/' : '/',
     mode: 'history',

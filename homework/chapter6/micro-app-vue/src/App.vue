@@ -3,14 +3,25 @@
  * @Author: kexi
  * @Date: 2021-08-02 13:51:43
  * @LastEditors: kexi
- * @LastEditTime: 2021-08-02 14:56:42
+ * @LastEditTime: 2021-08-06 16:47:09
 -->
 <template>
   <div id="app">
     <router-view/>
   </div>
 </template>
-
+<script>
+import actions from "@/shared/actions";
+export default {
+  mounted() {
+    actions.onGlobalStateChange(state => {
+      const { token } = state;
+      console.log("这里是vue微应用");
+      console.log(token);
+    }, true);
+  }
+}
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
