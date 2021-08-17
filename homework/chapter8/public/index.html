@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Master-Worker主从模式学习</title>
+  <style>
+    #list {
+      height: 300px;
+      overflow: scroll;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Master-Worker主从模式学习</h1>
+    <div>
+      <input type="text" id="text" />
+      <button id="send">往服务端发送消息</button>
+    </div>
+    <hr />
+    <div id="list"></div>
+  </div>
+  <script src="/public/socket.io.js"></script>
+  <script>
+    let list = [];
+    const socket = io("http://localhost:3000/")
+    // 建立socket连接
+    socket.on("connect", () => {
+      console.log("客户端socket链接成功,id:" + socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("客户端socket关闭成功,id:" + socket.id);
+    });
+
+    socket.on('message', (data) => {
+      console.log(data);
+      list.push({
+        name: '服务器',
+        value: data
+      })
+      createHTML();
+    })
+
+    // 绑定点击事件
+    document.getElementById('send').addEventListener('click', () => {
+      let text =  document.getElementById('text').value;
+      if (!text) {
+        text = 'hi, this is client'
+      }
+      socket.emit('message', text);
+      list.push({
+        name: '我',
+        value: text
+      });
+      createHTML();
+    })
+
+    function createHTML() {
+      let $list = document.getElementById('list');
+      let html = "";
+      list.forEach(item => {
+        let dom = "<p>";
+        dom += `<strong>${item.name}</strong>`;
+        dom += `<span>${item.value}</span>`;
+        dom += "</p>";
+        html += dom;
+      })
+      $list.innerHTML = html;
+    }
+
+
+  </script>
+</body>
+</html>
