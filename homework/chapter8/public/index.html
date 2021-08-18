@@ -1,3 +1,10 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2021-08-18 10:10:35
+ * @LastEditors: kexi
+ * @LastEditTime: 2021-08-18 10:29:04
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,6 +76,11 @@
         html += dom;
       })
       $list.innerHTML = html;
+
+      setTimeout(() => {
+        let height = document.getElementById('list').scrollHeight;
+        $list.scrollTo(0, height);
+      }, 0);
     }
 
 

@@ -1,3 +1,10 @@
+/*
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2021-08-18 10:10:35
+ * @LastEditors: kexi
+ * @LastEditTime: 2021-08-18 10:37:18
+ */
 // 加载框架并新建实例
 const fastify = require('fastify')({
   logger: true
@@ -50,6 +57,15 @@ for (let i = 0; i < cpuNum; ++i) {
     console.log('Received message from worker:' + msg);
     io.emit('message', msg);
   });
+  // 监听线程异常退出之后，重新加载
+  current.on('exit', ((i) => {
+    return () => {
+      console.log('worker-' + workers[i].pid + ' exited');
+      workers[i] = childProcess.fork('./worker.js');
+      console.log('Create worker-' + workers[i].pid);
+      workers[i].send('tcpServer', tcpServer);
+    }
+  })(i));
 }
 
 io.on('connection', function (socket) {
