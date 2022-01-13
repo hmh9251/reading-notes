@@ -3,7 +3,7 @@
  * @Author: kexi
  * @Date: 2020-09-07 14:47:23
  * @LastEditors: kexi
- * @LastEditTime: 2020-09-07 15:19:51
+ * @LastEditTime: 2022-01-05 18:12:07
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -16,31 +16,19 @@
   
 
   <div class="flex">
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
-    <div>4</div>
-    <div>5</div>
-  </div>
-  <div class="flex">
-    <div>1</div>
-    <div>2</div>
-    <div>3</div>
-    <div>4</div>
-    <div>5</div>
-    <div>6</div>
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Hic nostrum iste placeat reiciendis eos rem, neque, harum cumque soluta saepe veritatis voluptates quam, enim maiores perspiciatis eum modi fugiat vero?
+    Ad saepe porro recusandae! Distinctio accusamus commodi reiciendis, officiis unde optio ipsum cum repudiandae non aspernatur, quae, facere saepe! Assumenda rerum reiciendis id, numquam repudiandae similique reprehenderit rem minus possimus.
+    Cum quaerat voluptas molestiae repellendus, illum repellat, distinctio soluta fugit vero officia atque totam facilis nostrum libero quod quasi. Est, labore facere adipisci quibusdam ut facilis consequatur animi quae dicta.
+    Laboriosam explicabo quia distinctio quisquam cum itaque omnis, deleniti est soluta nihil odio, eaque at esse numquam eum ut animi necessitatibus excepturi. Saepe cupiditate laudantium soluta officia cumque necessitatibus repudiandae!
   </div>
   <style>
     .flex {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      margin-bottom: 100px;
-    }
-    .flex div {
-      min-width: 500px;
-      flex: 1;
-      border: 1px solid;
+      width: 500px;
+      overflow: hidden;
+      display: -webkit-box;
+      text-overflow:ellipsis;    
+      -webkit-line-clamp:2;
+      -webkit-box-orient:vertical;
     }
   </style>
 </body>
