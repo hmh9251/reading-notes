@@ -11,8 +11,10 @@ function parseHTML(html) {
   let root, parent, stack = []
   // 只要剩余的 html 不为空就一直解析
   while (html) {
+    // 判断第一个字符是不是<
     let textEnd = html.indexOf('<')
     if (textEnd == 0) {
+      // 解析开始标签
       const { tag, attrs, isClose } = parseStartTag() || {}
       if (tag) {
         start(tag, attrs);
@@ -20,7 +22,7 @@ function parseHTML(html) {
         continue
       }
       const endTagMatch = html.match(endTag)
-      if (endTag) {
+      if (endTagMatch) {
         advance(endTagMatch[0].length)
         end(endTagMatch[1])
         continue
@@ -159,14 +161,15 @@ function processAttrs(el) {
 /**
  * 解析ast树为dom
  * @param {} AST 
+ * 这个版本是拿到ast树直接渲染dom，结果v-for不好处理，还有其他模板语法估计也不是很好处理
  */
-function parseToHTML(AST, data) {
+/* function parseToHTML(AST, data) {
   let f = document.createDocumentFragment();
-  let dom = null;
+  let dom = [];
   if (AST.type === 1) {
     dom = parseTag(AST, data);
   } else if (AST.type === 3) {
-    dom = parseText(AST, data)
+    dom = parseText(AST, data);
   }
   f.appendChild(dom);
   return f;
@@ -221,6 +224,150 @@ function pText(str, data) {
 }
 
 function createFunc(data, exp) {
-  const func = new Function(`with(data){return ${exp}}`)
-  return func();
+  const func = new Function('data', `with(data){return ${exp}}`)
+  return func(data);
+} */
+
+/**
+ * 新修改一版本，是将AST直接处理vdom
+ */
+
+function generate(node) {
+  return node.type === 1 ? genElement(node) : genText(node.text)
 }
+
+function genElement(el) {
+  const { tag, attrsList, children } = el
+  const childNodes = children.map((child) => generate(child))
+  if (el.for && !el.forProcessed) {
+    el.forProcessed = true
+    return (
+      `_l((${el.for}),` +
+      `function(${el.alias}){` +
+      `return ${genElement(el)}` +
+      '})'
+    )
+  } else if (el.if && !el.ifProcessed) {
+    el.ifProcessed = true
+    return `${el.if} ? ${genElement(el)}: _e('')`
+  }
+  return `_c('${tag}',${genAttrs(attrsList)},${childNodes})`
+}
+
+function genAttrs(attrs) {
+  // const obj = {}
+  let objStr = "{";
+  for (let i = 0; i < attrs.length; i++) {
+    let attr = attrs[i]
+    if (attr.name === 'style') {
+      const kv = {} // 对样式进行特殊的处理
+      attr.value.split(';').forEach((item) => {
+        let [key, value] = item.split(':')
+        kv[key.trim()] = value.trim()
+      })
+      attr.value = kv
+    }
+    // obj[attr.name] = attr.value
+    if (attr.name.indexOf('v-bind') !== -1) {
+      objStr += `"${attr.name.split(':')[1]}": ${attr.value},`;
+    } else {
+      objStr += `"${attr.name}":"${attr.value}",`;
+    }
+  }
+  objStr += '}';
+  // return JSON.stringify(obj)
+  return objStr;
+}
+
+function genText(text) {
+  const defaultTagRE = /\{\{((?:.|\r?\n)+?)\}\}/g
+  if (!defaultTagRE.test(text)) {
+    return `_v(${JSON.stringify(text)})`
+  }
+  let tokens = []
+  let lastIndex = (defaultTagRE.lastIndex = 0)
+  let match, index
+  while ((match = defaultTagRE.exec(text))) {
+    index = match.index
+    if (index > lastIndex) {
+      tokens.push(JSON.stringify(text.slice(lastIndex, index)))
+    }
+    tokens.push(`_s(${match[1].trim()})`)
+    lastIndex = index + match[0].length
+  }
+  if (lastIndex < text.length) {
+    tokens.push(JSON.stringify(text.slice(lastIndex)))
+  }
+  return `_v(${tokens.join('+')})`
+}
+
+function _c(tag, data, ...children) {
+  return { tag, data, type: 1, children: children.flat() }
+}
+function _v(text) {
+  return { text, type: 3 }
+}
+
+function _s(val) {
+  if (val == null) return ''
+  if (typeof val == 'object') return JSON.stringify(val, null, 2)
+  return String(val)
+}
+
+function _l(val, render) {
+  const ret = new Array(val.length)
+  for (i = 0, l = val.length; i < l; i++) {
+    ret[i] = render(val[i], i)
+  }
+  return ret
+}
+
+function _e(text) {
+  return { text, type: 3, isComment: true }
+}
+
+function createVdom(vm, code) {
+  const f = new Function('vm', `with(vm){return ${code}}`)
+  return f({ ...vm, _c, _s, _v, _l, _e })
+}
+
+function vnodeToHTML(vnode) {
+  let root = document.createDocumentFragment();
+  if (vnode.type === 3) {
+    root.appendChild(document.createTextNode(vnode.text));
+    return root;
+  }
+  if (vnode.type === 1) {
+    let dom = document.createElement(vnode.tag);
+    if (vnode.data) {
+      Object.keys(vnode.data).forEach(item => {
+        dom.setAttribute(item, vnode.data[item]);
+      })
+    }
+    vnode.children.forEach(item => {
+      dom.appendChild(vnodeToHTML(item));
+    })
+    root.appendChild(dom);  
+  }
+  return root;
+}
+
+/* 
+_c('div',{"class":"newslist",},
+info.showImage ? _c('div',{"class":"img",},_c('img',{"src": image,},)): _e(''),
+info.showDate ? _c('div',{"class":"date",},_v(_s(info.name))): _e(''),
+confirm ? _c('div',{"class":"date",},_v(_s(info.name))): _e(''),
+_l((list),function(item){return _c('div',{"class":"img",},_v(_s(info.name)))}))
+ */
+
+
+
+
+
+let func = new Function(`let a = 0; console.log(a)`);
+func()
+
+
+
+
+

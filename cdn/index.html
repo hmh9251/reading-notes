@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>CDN容灾</title>
+  <script>
+      let errorNo = 0;
+      let depsMap = [];
+
+      let resourceMap = [
+        {
+          name: 'bootstrap',
+          url: ['https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.js'],
+          deps: [
+            {
+              name: 'jquery',
+              url: [
+              'https://cdn.bootcdn2.net/ajax/libs/jquery/2.1.4/jquery.js',
+              'https://cdn.bootcdn.net/ajax/libs/jquery/2.1.4/jquery.js',
+              ]
+            }
+          ]
+        },
+        {
+          name: 'backbone',
+          url: [
+            'https://cdn.bootcdnerr.net/ajax/libs/backbone.js/1.4.1/backbone-min.js',
+            'https://cdn.bootcdn.net/ajax/libs/backbone.js/1.4.1/backbone-min.js',
+          ],
+          deps: [
+            {
+              name: 'lodash',
+              url: ['https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.core.js']
+            }
+          ]
+        }
+      ]
+      function loadResource(links, moduleName, fnSuccess, fnError) {
+          var script = document.createElement('script');
+          script.onerror = function () {
+              document.head.removeChild(script);
+              fnError();
+          };
+          script.onload = fnSuccess
+          script.src = links.shift();
+          document.head.appendChild(script);
+      }
+      function autoSwitch(resourceList, moduleName) {
+          if (depsMap.includes(moduleName)) {
+            return false;
+          }
+          if (resourceList.length === 0) return false;
+          var resource = resourceList.shift();
+          loadResource([resource], moduleName, function (success) {
+              depsMap.push(moduleName);
+              setTimeout(() => {
+                initLoader(resourceMap)
+              }, 100);
+          }, function (err) {
+              autoSwitch(resourceList, moduleName);
+          });
+      }
+      function initLoader(resource) {
+        resource.forEach(item => {
+          let moduleName = item.name;
+          let deps = item.deps
+          if (depsMap.includes(moduleName)) {
+            return false;
+          }
+          let result = true;
+          deps && deps.forEach(item => {
+            if (!depsMap.includes(item.name)) {
+              // 说明还有模块没加载
+              result = false;
+            }
+          })
+          
+          if (deps && !result) {
+            // 有依赖 并且还有依赖没有加载，则先去加载依赖
+            initLoader(deps);
+          } else {
+            // 没有依赖，则开始加载自身模块
+            autoSwitch(item.url, item.name);
+          }
+        })
+      }
+
+      initLoader(resourceMap);
+  </script>
+</head>
+<body>
+</body>
+</html>

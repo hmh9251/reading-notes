@@ -1,3 +1,10 @@
+<!--
+ * @Desc: 
+ * @Author: kexi
+ * @Date: 2021-07-28 15:07:54
+ * @LastEditors: kexi
+ * @LastEditTime: 2022-03-09 18:17:15
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +14,27 @@
   <title>Document</title>
 </head>
 <body>
+
+  <ul>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+    <li key="uuid5">5</li>
+  </ul>
+
+  <ul>
+    <li>1</li>
+    <li key="uuid5">5</li>
+    <li>2</li>
+    <li>3</li>
+    <li>6</li>
+    <li>7</li>
+    <li>8</li>
+    <li>4</li>
+  </ul>
+
+
   
   <div id="app"></div>
   
@@ -14,24 +42,39 @@
   <script>
     const app = document.getElementById('app');
     let tmpl = `<div class="newslist">
-        <div class="img" v-if="info.showImage"><img src="{{image}}" /></div>
+        <div class="img" v-if="info.showImage"><img v-bind:src="confirm ? image : ''" /></div>
         <div class="date" v-if="info.showDate">{{info.name}}</div>
-        <div class="img">{{info.name}}</div>
+        <div class="date" v-if="confirm">{{info.name}}</div>
+        <div class="img" v-for="item in list">{{info.name}}</div>
     </div>`;
 
     const data = {
+      confirm: false,
       image: "https://sf3-ttcdn-tos.pstatp.com/img/user-avatar/a9a1f78f2c38cd6a46be07b5c39905c8~300x300.image", 
       info: {
         showImage: true,
         showDate:false,
         name: "aaa"
-      }
+      },
+      list: [
+        { name: 'a' },
+        { name: 'b' },
+        { name: 'c' }
+      ]
     };
-    const html = parseHTML(tmpl);
+    const ast = parseHTML(tmpl);
+    console.log(ast);
+    // 老版本
+    // const dom = parseToHTML(ast, data);
+    // 得到代码字符串
+    const str = generate(ast);
+    console.log(str);
+    // 生成vdom
+    const vdom = createVdom(data, str)
+    console.log(vdom);
+    const html = vnodeToHTML(vdom);
     console.log(html);
-    const dom = parseToHTML(html, data);
-    console.log(dom);
-    app.appendChild(dom);
+    app.appendChild(html);
   </script>
 </body>
 </html>

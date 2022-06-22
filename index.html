@@ -13,47 +13,19 @@
     <title>Document</title>
   </head>
   <body>
-    <code></code>
-    <style>
-      .flex {
-        width: 500px;
-        overflow: hidden;
-        display: -webkit-box;
-        text-overflow: ellipsis;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-      }
-    </style>
     <script>
-      // 调用方式：
-      // int[]a = a={1, 2, 3, 4}; printPermutations(a, 4, 4);
-      // k表示要处理的子数组的数据个数
-      printPermutations([1,2,3,4], 4, 4);
-      function printPermutations(data, n, k) {
-        if (k == 1) {
-          for (let i = 0; i < n; ++i) {
-            console.log(data[i] + " ");
-          }
-          console.log("\n");
-        }
-
-        for (let i = 0; i < k; ++i) {
-          let tmp = data[i];
-          data[i] = data[k - 1];
-          data[k - 1] = tmp;
-
-          printPermutations(data, n, k - 1);
-
-          tmp = data[i];
-          data[i] = data[k - 1];
-          data[k - 1] = tmp;
-        }
+      
+      let arr = [0, 1, 2, 3, 4, 5, 6];
+      let arrCopy = arr.concat();
+      let result = [];
+      while(arrCopy.length > 0) {
+        let res = [];
+        res.push(arrCopy.shift());
+        res.push(arrCopy.shift() || "");
+        result.push(res);
       }
 
-      // 1 2 3 4
-      // 4 2 3 1
-      // 3 2 4 1
-      // 2 3 4 1
+      console.log(result);
     </script>
   </body>
 </html>
